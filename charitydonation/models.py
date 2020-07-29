@@ -2,9 +2,9 @@ from django.db import models
 from django.conf import settings
 
 INSTITUTION_TYPES = (
-    (1, 'Fundacja'),
-    (2, 'Organizacja pozarządowa'),
-    (3, 'Zbiórka lokalna')
+    ('Fundacja', 'Fundacja'),
+    ('Organizacja pozarządowa', 'Organizacja pozarządowa'),
+    ('Zbiórka lokalna', 'Zbiórka lokalna')
 )
 
 class Category(models.Model):
@@ -35,7 +35,7 @@ class Donation(models.Model):
     pick_up_date = models.DateField()
     pick_up_time = models.TimeField()
     pick_up_comment = models.CharField(max_length=128)
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True, default=None)
 
     def __str__(self):
-        return 'donation {} - {}'.format(self.quantity, self.categories)
+        return 'donation {} - {}'.format(self.quantity, self.address)

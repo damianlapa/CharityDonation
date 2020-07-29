@@ -9,11 +9,12 @@
         </ul>
 
         <ul>
-          <li><a href="#">Start</a></li>
-          <li><a href="#">O co chodzi?</a></li>
-          <li><a href="#">O nas</a></li>
-          <li><a href="#">Fundacje i organizacje</a></li>
-          <li><a href="#">Kontakt</a></li>
+          <li><a href="{% url 'landing-page' %}" class="btn btn--without-border active">Start</a></li>
+          <li><a href="{% url 'landing-page' %}#steps" class="btn btn--without-border">O co chodzi?</a></li>
+          <li><a href="{% url 'landing-page' %}#about-us" class="btn btn--without-border">O nas</a></li>
+          <li><a href="{% url 'landing-page' %}#help" class="btn btn--without-border">Fundacje i organizacje</a></li>
+          <li><a href="{% url 'add-donation' %}" class="btn btn--without-border">Przekaż dary</a></li>
+          <li><a href="#contact" class="btn btn--without-border">Kontakt</a></li>
         </ul>
       </nav>
     </header>
