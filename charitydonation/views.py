@@ -3,6 +3,8 @@ from django.views import View
 from charitydonation.models import Category, Donation, Institution
 from django.http import HttpResponse
 from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, logout, login
+
 
 class LandingPage(View):
 
@@ -22,13 +24,36 @@ class LandingPage(View):
 class AddDonation(View):
 
     def get(self, request):
-        return render(request, 'form.html')
+
+        username = request.user.username
+
+        return render(request, 'form.html', locals())
 
 
 class Login(View):
 
     def get(self, request):
         return render(request, 'login.html')
+
+    def post(self, request):
+        email = request.POST.get('email')
+        password = request.POST.get('password')
+
+        user = authenticate(username=email, password=password)
+
+        if user:
+            login(request, user)
+            return redirect('landing-page')
+
+        else:
+            return redirect('register')
+
+
+class Logout(View):
+
+    def get(self, request):
+        logout(request)
+        return redirect('login')
 
 
 class Register(View):
