@@ -4,6 +4,7 @@ from charitydonation.models import Category, Donation, Institution
 from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
+from django.contrib.auth.decorators import login_required
 
 
 class LandingPage(View):
@@ -18,6 +19,7 @@ class LandingPage(View):
         foundations = institutions.filter(type='Fundacja')
         organizations = institutions.filter(type='Organizacja pozarządowa')
         local_collections = institutions.filter(type='Zbiórka lokalna')
+        username = request.user.first_name + ' ' + request.user.last_name
         return render(request, 'index.html', locals())
 
 
@@ -26,6 +28,7 @@ class AddDonation(View):
     def get(self, request):
 
         username = request.user.username
+        categories = Category.objects.all()
 
         return render(request, 'form.html', locals())
 
