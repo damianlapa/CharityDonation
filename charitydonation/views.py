@@ -5,6 +5,7 @@ from django.http import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 class LandingPage(View):
@@ -19,11 +20,11 @@ class LandingPage(View):
         foundations = institutions.filter(type='Fundacja')
         organizations = institutions.filter(type='Organizacja pozarządowa')
         local_collections = institutions.filter(type='Zbiórka lokalna')
-        username = request.user.first_name + ' ' + request.user.last_name
         return render(request, 'index.html', locals())
 
 
-class AddDonation(View):
+class AddDonation(LoginRequiredMixin, View):
+    login_url = 'login'
 
     def get(self, request):
 
