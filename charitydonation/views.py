@@ -35,6 +35,7 @@ class AddDonation(LoginRequiredMixin, View):
     def get(self, request):
         username = request.user.username
         categories = Category.objects.all()
+        organizations = Institution.objects.all()
 
         return render(request, 'form.html', locals())
 
