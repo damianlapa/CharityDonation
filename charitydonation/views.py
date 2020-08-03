@@ -20,6 +20,12 @@ class LandingPage(View):
         foundations = institutions.filter(type='Fundacja')
         organizations = institutions.filter(type='Organizacja pozarządowa')
         local_collections = institutions.filter(type='Zbiórka lokalna')
+
+        if request.user.is_anonymous:
+            username = 'Gość'
+        else:
+            username = request.user.email
+
         return render(request, 'index.html', locals())
 
 
