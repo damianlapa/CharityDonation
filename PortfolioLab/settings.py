@@ -58,7 +58,7 @@ TEMPLATES = [
     }
 ]
 
-WSGI_APPLICATION = "gettingstarted.wsgi.application"
+WSGI_APPLICATION = "PortfolioLab.wsgi.application"
 
 
 # Database
