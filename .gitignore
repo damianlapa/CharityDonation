@@ -9,6 +9,8 @@
 *.pot
 *.pyc
 __pycache__/
+PortfolioLab/__pycache__/
+charitydonation/__pycache__/
 local_settings.py
 db.sqlite3
 db.sqlite3-journal
