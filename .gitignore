@@ -4,6 +4,14 @@
 
 .idea/
 
+*/*/*/__pycache__/
+
+*/*/__pycache__/
+
+*/__pycache__/
+
+
+
 ### Django ###
 *.log
 *.pot
