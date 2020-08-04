@@ -232,9 +232,53 @@ document.addEventListener("DOMContentLoaded", function() {
       });
 
       this.$stepInstructions[0].parentElement.parentElement.hidden = this.currentStep >= 6;
+
+
+
       this.$step.parentElement.hidden = this.currentStep >= 6;
 
       // TODO: get data from inputs and show them in summary
+
+      const formularz = document.querySelector('form')
+
+      if (this.currentStep === 5) {
+        const bagsQuantity = formularz.elements.bags.value;
+        const institutionName = formularz.elements.organization.value;
+        const address = formularz.elements.address.value;
+        const city = formularz.elements.city.value;
+        const postcode = formularz.elements.postcode.value;
+        const phone = formularz.elements.phone.value;
+        const data = formularz.elements.data.value;
+        const time = formularz.elements.time.value;
+        const moreInfo = formularz.elements.more_info.value;
+
+        const categories = formularz.querySelectorAll('input[name=categories]:checked');
+        const dataFields = formularz.querySelectorAll('.summary--text');
+        const summaryInformations = formularz.querySelectorAll('.summary')
+
+        let categoriesText = ''
+
+        for (let i=0; i < categories.length; i++) {
+          categoriesText = categoriesText + categories[i].value
+          if (i !== categories.length - 1) {
+            categoriesText = categoriesText + ', '
+          }
+        }
+
+        const quantityText = 'Oddajesz ' + bagsQuantity + ' worki ' + categoriesText
+
+        dataFields[0].innerHTML = quantityText
+        dataFields[1].innerHTML = 'Dla ' + institutionName
+        console.log(summaryInformations[0])
+        const listElements = summaryInformations[0].getElementsByTagName('li')
+        listElements[2].innerHTML = address
+        listElements[3].innerHTML = city
+        listElements[4].innerHTML = postcode
+        listElements[5].innerHTML = phone
+        listElements[6].innerHTML = data
+        listElements[7].innerHTML = time
+        listElements[8].innerHTML = moreInfo
+      }
     }
 
     /**
@@ -243,9 +287,9 @@ document.addEventListener("DOMContentLoaded", function() {
      * TODO: validation, send data to server
      */
     submit(e) {
-      e.preventDefault();
-      this.currentStep++;
-      this.updateForm();
+      // e.preventDefault();
+      // this.currentStep++;
+      // this.updateForm();
     }
   }
   const form = document.querySelector(".form--steps");
