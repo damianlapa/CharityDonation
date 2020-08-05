@@ -8,6 +8,16 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 
+class UserData(View):
+    def get(self, request):
+        if request.user.is_anonymous:
+            username = 'Gość'
+        else:
+            if request.user.is_superuser:
+                user_admin = True
+            username = request.user.email
+
+
 class LandingPage(View):
 
     def get(self, request):
@@ -115,3 +125,20 @@ class FormConfirmation(View):
 
     def get(self, request):
         return render(request, 'form-confirmation.html')
+
+
+class Profile(View):
+
+    def get(self, request):
+        if request.user.is_anonymous:
+            username = 'Gość'
+        else:
+            if request.user.is_superuser:
+                user_admin = True
+            username = request.user.email
+            user_first_name = request.user.first_name
+            user_last_name = request.user.last_name
+            user_email = request.user.email
+
+            user_donations = Donation.objects.all().filter(user=User.objects.get(email__exact=user_email))
+        return render(request, 'profile.html', locals())
