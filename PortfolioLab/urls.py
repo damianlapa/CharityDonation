@@ -18,12 +18,12 @@ from django.urls import path
 from charitydonation.views import LandingPage, Login, Register, AddDonation, Logout, FormConfirmation
 
 urlpatterns = [
-    path('admin/', admin.site.urls),
+    path('admin/', admin.site.urls, name='admin'),
     path('', LandingPage.as_view(), name='landing-page'),
     path('login', Login.as_view(), name='login'),
     path('register', Register.as_view(), name='register'),
     path('add-donation', AddDonation.as_view(), name='add-donation'),
     path('logout', Logout.as_view(), name='logout'),
-    path('form-confirmation', FormConfirmation.as_view(), name='form-confirmation')
+    path('form-confirmation', FormConfirmation.as_view(), name='form-confirmation'),
 
 ]

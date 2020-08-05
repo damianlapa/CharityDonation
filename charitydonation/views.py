@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from charitydonation.models import Category, Donation, Institution
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
@@ -24,6 +24,8 @@ class LandingPage(View):
         if request.user.is_anonymous:
             username = 'Gość'
         else:
+            if request.user.is_superuser:
+                user_admin = True
             username = request.user.email
 
         return render(request, 'index.html', locals())
