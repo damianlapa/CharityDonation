@@ -1,8 +1,14 @@
 <nav class="container container--70">
-    {% if user %}
-        <ul class="nav--actions">
+    {% if request.user.is_anonymous %}
+    <ul class="nav--actions">
+        <li><a href="{% url 'login' %}" class="btn btn--small btn--without-border">Zaloguj</a></li>
+        <li><a href="{% url 'register' %}" class="btn btn--small btn--highlighted">Załóż konto</a></li>
+    </ul>
+
+    {% else %}
+    <ul class="nav--actions">
           <li class="logged-user">
-            Witaj {{ username }}
+            Witaj {{ request.user.email }}
             <ul class="dropdown">
               <li><a href="{% url 'profile' %}">Profil</a></li>
               <li><a href="#">Ustawienia</a></li>
@@ -13,11 +19,6 @@
             </ul>
           </li>
         </ul>
-    {% else %}
-    <ul class="nav--actions">
-        <li><a href="{% url 'login' %}" class="btn btn--small btn--without-border">Zaloguj</a></li>
-        <li><a href="{% url 'register' %}" class="btn btn--small btn--highlighted">Załóż konto</a></li>
-    </ul>
     {% endif %}
 
     <ul>

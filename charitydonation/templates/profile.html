@@ -36,21 +36,29 @@
         </div>
         <div class="profile-donations">
             <h2>Darowizny Użytkownika</h2>
-            <table>
-            <tbody>
-                <tr class="{% if donation.is_taken %}picked{% else %}not-picked{% endif %}">
+            <table class="all-donations">
+                <tbody>
+                <tr>
                     <th>Ilość worków</th>
                     <th>Przekazane do:</th>
                     <th>Data przekazania:</th>
                     {% for donation in user_donations %}
-                        <tr>
-                            <td>{{ donation.quantity }}</td>
-                            <td>{{ donation.institution }}</td>
-                            <td>{{ donation.pick_up_date }}</td>
-                        </tr>
+                        {% if donation.is_taken %}
+                            <tr class="picked">
+                        {% else %}
+                            <tr class="not-picked">
+                        {% endif %}
+                    <td style="display: none">{{ donation.id }}</td>
+                    <td>{{ donation.quantity }}</td>
+                    <td>{{ donation.institution }}</td>
+                    <td>{{ donation.pick_up_date }}</td>
+                    <td>
+                        <button class="donation-button">Dar odebrany</button>
+                    </td>
+                    </tr>
 
                     {% endfor %}
-            </tbody>
+                </tbody>
             </table>
         </div>
 

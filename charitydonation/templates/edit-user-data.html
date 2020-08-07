@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+<header >
+            {% include 'navigation.html' %}
+        </header>
+        <div class="profile-info">
+
+            <h2>Profil Użytkownika</h2><br/>
+            <form action="" method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>Imię</td>
+                    <th><input name='first_name' value="{{ request.user.first_name }}"></th>
+                </tr>
+                <tr>
+                    <td>Nazwisko</td>
+                    <th><input name='last_name' value="{{ request.user.last_name }}"></th>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <th><input name="email" value="{{ request.user.email }}"></th>
+                </tr>
+                <tr>
+                    <td>hasło</td>
+                    <th class="edit-password"><input name="password" id="conf-pass" type="password"></th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input class='edit-button' type="submit" value="Edytuj" disabled>
+                    </td>
+                </tr>
+            </table>
+            </form>
+{% endblock %}
