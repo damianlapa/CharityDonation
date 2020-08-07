@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.hashers import check_password
+from django.contrib.auth.hashers import check_password, make_password
 import json
 
 class UserData(View):
@@ -162,19 +162,36 @@ class ProfileEdit(View):
         return render(request, 'edit-user-data.html', locals())
 
     def post(self, request):
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
-        email = request.POST.get('email')
+        submit_value = request.POST.get('submit')
 
-        user = request.user
+        if submit_value == 'Edytuj':
+            first_name = request.POST.get('first_name')
+            last_name = request.POST.get('last_name')
+            email = request.POST.get('email')
 
-        user.first_name = first_name
-        user.last_name = last_name
-        user.email = email
+            user = request.user
 
-        user.save()
+            user.first_name = first_name
+            user.last_name = last_name
+            user.email = email
 
-        return redirect('edit')
+            user.save()
+
+            return redirect('edit')
+
+        else:
+            old_password = request.POST.get('old_pass')
+            new_password = request.POST.get('new_pass')
+            repeated_new_pass = request.POST.get('new_pass_repeat')
+
+            if new_password == repeated_new_pass:
+                if check_password(old_password, request.user.password):
+                    user = request.user
+                    user.password = make_password(new_password)
+                    user.save()
+                    return redirect('landing-page')
+            else:
+                return HttpResponse('do not repeat')
 
 
 class CorrectPassword(View):
