@@ -6,6 +6,17 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.hashers import check_password
+import json
+
+class UserData(View):
+    def get(self, request):
+        if request.user.is_anonymous:
+            username = 'Gość'
+        else:
+            if request.user.is_superuser:
+                user_admin = True
+            username = request.user.email
 
 
 class LandingPage(View):
@@ -44,7 +55,7 @@ class AddDonation(LoginRequiredMixin, View):
     def post(self, request):
         quantity = request.POST.get('bags')
         categories = request.POST.getlist('categories')
-        institution = request.POST.get('organization')
+        institution = Institution.objects.get(name=request.POST.get('organization'))
         address = request.POST.get('address')
         phone_number = request.POST.get('phone')
         city = request.POST.get('city')
@@ -60,7 +71,7 @@ class AddDonation(LoginRequiredMixin, View):
                                                pick_up_comment=pick_up_comment, user=user)
 
         for category in categories:
-            new_donation.categories.add(category)
+            new_donation.categories.add(Category.objects.get(name=category))
 
         new_donation.save()
 
@@ -115,3 +126,66 @@ class FormConfirmation(View):
 
     def get(self, request):
         return render(request, 'form-confirmation.html')
+
+
+class Profile(View):
+
+    def get(self, request):
+        if request.user.is_anonymous:
+            username = 'Gość'
+        else:
+            if request.user.is_superuser:
+                user_admin = True
+            username = request.user.email
+            user_first_name = request.user.first_name
+            user_last_name = request.user.last_name
+            user_email = request.user.email
+
+            user_donations = Donation.objects.all().filter(user=User.objects.get(email__exact=user_email))
+        return render(request, 'profile.html', locals())
+
+
+class Take(View):
+
+    def get(self, request):
+        donation_id = request.GET.get('organization')
+        donation = Donation.objects.get(id=donation_id)
+        donation.is_taken = True
+        donation.save()
+        z = json.dumps(donation_id)
+        return HttpResponse(z)
+
+
+class ProfileEdit(View):
+
+    def get(self, request):
+        return render(request, 'edit-user-data.html', locals())
+
+    def post(self, request):
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
+        email = request.POST.get('email')
+
+        user = request.user
+
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+
+        user.save()
+
+        return redirect('edit')
+
+
+class CorrectPassword(View):
+
+    def post(self, request):
+        password = request.POST.get('password')
+        print(password)
+        print(check_password(password, request.user.password))
+        if check_password(password, request.user.password):
+            print('ok')
+            return HttpResponse(json.dumps('correct-password'))
+        else:
+            return HttpResponse(json.dumps('incorrect'))
+

@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% include 'navigation.html' %}
+{% block content %}
+    <div>
+        <header class="header--main-page">
+            {% include 'navigation.html' %}
+            <div class="slogan container container--90">
+                <div class="slogan--item">
+                    <h1>
+                        Informacje o twoim profilu!<br/>
+                        Sprawdź jakie rzeczy już przekazałeś
+                    </h1>
+                </div>
+            </div>
+        </header>
+
+        <div class="profile-info">
+
+            <h2>Profil Użytkownika</h2><br/>
+
+            <table>
+                <tr>
+                    <td>Imię</td>
+                    <th>{{ user_first_name }}</th>
+                </tr>
+                <tr>
+                    <td>Nazwisko</td>
+                    <th>{{ user_last_name }}</th>
+                </tr>
+                <tr>
+                    <td>email</td>
+                    <th>{{ user_email }}</th>
+                </tr>
+            </table>
+
+        </div>
+        <div class="profile-donations">
+            <h2>Darowizny Użytkownika</h2>
+            <table class="all-donations">
+                <tbody>
+                <tr>
+                    <th>Ilość worków</th>
+                    <th>Przekazane do:</th>
+                    <th>Data przekazania:</th>
+                    {% for donation in user_donations %}
+                        {% if donation.is_taken %}
+                            <tr class="picked">
+                        {% else %}
+                            <tr class="not-picked">
+                        {% endif %}
+                    <td style="display: none">{{ donation.id }}</td>
+                    <td>{{ donation.quantity }}</td>
+                    <td>{{ donation.institution }}</td>
+                    <td>{{ donation.pick_up_date }}</td>
+                    <td>
+                        <button class="donation-button">Dar odebrany</button>
+                    </td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+{% endblock %}
