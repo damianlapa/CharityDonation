@@ -242,6 +242,14 @@ document.addEventListener("DOMContentLoaded", function () {
 
             const formularz = document.querySelector('form')
 
+            if (this.currentStep === 3){
+                console.log('ok')
+                const categories = formularz.querySelectorAll('input[type="checkbox"]:checked')
+                for (let i=0; i < categories.length; i++){
+                    console.log(categories[i].value)
+                }
+            }
+
             if (this.currentStep === 5) {
                 const bagsQuantity = formularz.elements.bags.value;
                 const institutionName = formularz.elements.organization.value;

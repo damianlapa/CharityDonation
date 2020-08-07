@@ -30,9 +30,38 @@
                 <tr>
                     <td></td>
                     <td>
-                        <input class='edit-button' type="submit" value="Edytuj" disabled>
+                        <input class='edit-button' type="submit" value="Edytuj" name="submit" disabled>
                     </td>
                 </tr>
             </table>
             </form>
+        </div>
+        <div class="change-password">
+
+            <h3>Zmiana hasła</h3><br/>
+            <form action="" method="post">
+            {% csrf_token %}
+            <table>
+                <tr>
+                    <td>Stare hasło</td>
+                    <th><input name='old_pass' type="password"></th>
+                </tr>
+                <tr>
+                    <td>Nowe hasło</td>
+                    <th><input name='new_pass' type="password"></th>
+                </tr>
+                <tr>
+                    <td>Powtórz hasło</td>
+                    <th><input name="new_pass_repeat" type="password"></th>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td>
+                        <input class='edit-button' type="submit" value="Zmień hasło" name="submit">
+                    </td>
+                </tr>
+            </table>
+            </form>
+
+        </div>
 {% endblock %}
