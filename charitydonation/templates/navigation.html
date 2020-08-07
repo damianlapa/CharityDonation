@@ -11,7 +11,7 @@
             Witaj {{ request.user.email }}
             <ul class="dropdown">
               <li><a href="{% url 'profile' %}">Profil</a></li>
-              <li><a href="#">Ustawienia</a></li>
+              <li><a href="{% url 'edit' %}">Ustawienia</a></li>
                 {% if user_admin %}
                     <li><a href="{% url 'admin:index' %}">panel administracyjny</a> </li>
                     {% endif %}
