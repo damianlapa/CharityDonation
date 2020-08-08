@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.views import View
-from charitydonation.models import Category, Donation, Institution
+from charitydonation.models import Category, Donation, Institution, UserToken
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, logout, login
@@ -8,6 +8,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.hashers import check_password, make_password
 import json
+import random
+from django.core.mail import send_mail
+
 
 class UserData(View):
     def get(self, request):
@@ -117,7 +120,23 @@ class Register(View):
         password2 = request.POST.get('password2')
 
         if password == password2:
-            User.objects.create_user(username=email, email=email, password=password, first_name=name, last_name=surname)
+
+            new_user = User.objects.create_user(username=email, email=email, password=password, first_name=name,
+                                                last_name=surname,
+                                                is_active=False)
+            signs = (
+                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n',
+                'm', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p')
+            user_token = ''
+            for _ in range(0, 16):
+                user_token += str(signs[random.randint(0, len(signs) - 1)])
+            UserToken.objects.create(user=new_user, token=user_token)
+
+            html_message = 'Congratulations for create new account! Enter this link to activate your account: <a ' \
+                           'href="127.0.0.1:8000/validate-account"/{}>127.0.0.1:8000/validate-account/{}</a>'.format(
+                            user_token, user_token)
+
+            send_mail('New Account', '', 'Django bot', (email,), html_message=html_message)
 
             return redirect('login')
 
@@ -206,3 +225,13 @@ class CorrectPassword(View):
         else:
             return HttpResponse(json.dumps('incorrect'))
 
+
+class ValidateAccount(View):
+
+    def get(self, request, token_value):
+        user_token = UserToken.objects.get(token=token_value)
+        user_to_activate = user_token.user
+        user_to_activate.is_active = True
+        user_to_activate.save()
+        login(request, user_to_activate)
+        return redirect('landing-page')
