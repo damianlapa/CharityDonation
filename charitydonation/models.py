@@ -1,5 +1,6 @@
 from django.db import models
 from django.conf import settings
+from django.contrib.auth.models import User
 
 INSTITUTION_TYPES = (
     ('Fundacja', 'Fundacja'),
@@ -40,3 +41,8 @@ class Donation(models.Model):
 
     def __str__(self):
         return 'donation {} - {}'.format(self.quantity, self.address)
+
+
+class UserToken(models.Model):
+    user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
+    token = models.CharField(max_length=16)
