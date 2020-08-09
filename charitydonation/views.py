@@ -10,6 +10,9 @@ from django.contrib.auth.hashers import check_password, make_password
 import json
 import random
 from django.core.mail import send_mail
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
 
 
 class UserData(View):
@@ -132,11 +135,21 @@ class Register(View):
                 user_token += str(signs[random.randint(0, len(signs) - 1)])
             UserToken.objects.create(user=new_user, token=user_token)
 
-            html_message = 'Congratulations for create new account! Enter this link to activate your account: <a ' \
-                           'href="127.0.0.1:8000/validate-account"/{}>127.0.0.1:8000/validate-account/{}</a>'.format(
-                            user_token, user_token)
 
-            send_mail('New Account', '', 'Django bot', (email,), html_message=html_message)
+            html = """\
+            <html>
+              <body>
+                <p>Hi,<br>
+                   Congratulations for create new account! Enter this link to activate your account: <br>
+                   <a href="{}/{}">Activate Your Account</a>
+                </p>
+              </body>
+            </html>
+            """.format(os.environ.get('ACTIVATE_LINK'), user_token)
+
+            message = MIMEText(html, 'html')
+
+            send_mail('New Account', '', 'Charity Donation', (email,), html_message=message)
 
             return redirect('login')
 
