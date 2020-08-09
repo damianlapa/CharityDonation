@@ -10,6 +10,22 @@ from django.contrib.auth.hashers import check_password, make_password
 import json
 import random
 from django.core.mail import send_mail
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+import os
+import datetime
+
+
+def create_token(token_length):
+    signs = (
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n',
+        'm', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', 'A',
+        'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', 'Z', 'X', 'C', 'V', 'B', 'N', 'M')
+    token = ''
+    for _ in range(0, token_length):
+        token += str(signs[random.randint(0, len(signs) - 1)])
+
+    return token
 
 
 class UserData(View):
@@ -124,21 +140,23 @@ class Register(View):
             new_user = User.objects.create_user(username=email, email=email, password=password, first_name=name,
                                                 last_name=surname,
                                                 is_active=False)
-            signs = (
-                0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', 'z', 'x', 'c', 'v', 'b', 'n',
-                'm', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p')
-            user_token = ''
-            for _ in range(0, 16):
-                user_token += str(signs[random.randint(0, len(signs) - 1)])
+            user_token = create_token(16)
             UserToken.objects.create(user=new_user, token=user_token)
 
-            html_message = 'Congratulations for create new account! Enter this link to activate your account: <a ' \
-                           'href="127.0.0.1:8000/validate-account"/{}>127.0.0.1:8000/validate-account/{}</a>'.format(
-                            user_token, user_token)
+            html = """\
+            <html>
+              <body>
+                <p>Hi,<br>
+                   Congratulations for create new account! Enter this link to activate your account: <br>
+                   <a href="{}/{}">Activate Your Account</a>
+                </p>
+              </body>
+            </html>
+            """.format(os.environ.get('ACTIVATE_LINK'), user_token)
 
-            send_mail('New Account', '', 'Django bot', (email,), html_message=html_message)
+            send_mail('New Account', '', 'Charity Donation', (email,), html_message=html)
 
-            return redirect('login')
+            return redirect('landing-page')
 
 
 class FormConfirmation(View):
@@ -230,8 +248,42 @@ class ValidateAccount(View):
 
     def get(self, request, token_value):
         user_token = UserToken.objects.get(token=token_value)
-        user_to_activate = user_token.user
-        user_to_activate.is_active = True
-        user_to_activate.save()
-        login(request, user_to_activate)
-        return redirect('landing-page')
+
+        user = user_token.user
+
+        if user.is_active:
+
+            return HttpResponse('User was already activated!')
+
+        else:
+
+            difference = datetime.datetime.now(datetime.timezone.utc) - user_token.date_created
+
+            if difference > datetime.timedelta(hours=1):
+
+                user_token.delete()
+                new_token = create_token(16)
+                UserToken.objects.create(user=user, token=new_token)
+
+                html = """\
+                            <html>
+                              <body>
+                                <p>Hi,<br>
+                                   We've created for you new token! Enter this link to activate your account: <br>
+                                   <a href="{}/{}">Activate Your Account</a>
+                                </p>
+                              </body>
+                            </html>
+                            """.format(os.environ.get('ACTIVATE_LINK'), new_token)
+
+                send_mail('Activate Account', '', 'Charity Donation', (user.email,), html_message=html)
+
+                return HttpResponse('Token out of date. We have send you new token to activate your account')
+
+            else:
+
+                user_to_activate = user_token.user
+                user_to_activate.is_active = True
+                user_to_activate.save()
+                login(request, user_to_activate)
+                return redirect('landing-page')

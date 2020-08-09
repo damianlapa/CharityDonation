@@ -46,3 +46,4 @@ class Donation(models.Model):
 class UserToken(models.Model):
     user = models.OneToOneField(User, unique=True, on_delete=models.CASCADE)
     token = models.CharField(max_length=16)
+    date_created = models.DateTimeField(auto_now=True)
