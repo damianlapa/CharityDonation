@@ -147,9 +147,9 @@ class Register(View):
             </html>
             """.format(os.environ.get('ACTIVATE_LINK'), user_token)
 
-            message = MIMEText(html, 'html')
+            send_mail('New Account', '', 'Charity Donation', (email,), html_message=html)
 
-            send_mail('New Account', '', 'Charity Donation', (email,), html_message=message)
+            print(html)
 
             return redirect('login')
 
