@@ -228,7 +228,8 @@ class ProfileEdit(View):
                     user.save()
                     return redirect('landing-page')
             else:
-                return HttpResponse('do not repeat')
+                statement = "Passwords aren't this same"
+                return render(request, 'statement.html', locals())
 
 
 class CorrectPassword(View):
@@ -253,7 +254,9 @@ class ValidateAccount(View):
 
         if user.is_active:
 
-            return HttpResponse('User was already activated!')
+            statement = 'User was already activated!'
+
+            return render(request, 'statement.html', locals())
 
         else:
 
@@ -278,7 +281,9 @@ class ValidateAccount(View):
 
                 send_mail('Activate Account', '', 'Charity Donation', (user.email,), html_message=html)
 
-                return HttpResponse('Token out of date. We have send you new token to activate your account')
+                statement = 'Token out of date. We have send you new token to activate your account'
+
+                return render(request, 'statement.html', locals())
 
             else:
 
@@ -287,3 +292,6 @@ class ValidateAccount(View):
                 user_to_activate.save()
                 login(request, user_to_activate)
                 return redirect('landing-page')
+
+
+
