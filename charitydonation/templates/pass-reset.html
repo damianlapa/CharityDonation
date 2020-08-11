@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% include 'navigation.html' %}
+{% block content %}
+    <div>
+        <header class="header--main-page">
+            {% include 'navigation.html' %}
+            <div class="slogan container container--90">
+                <div class="slogan--item">
+                    <h1>
+                        Obsługa zapomnianych haseł
+                    </h1>
+                </div>
+            </div>
+        </header>
+        <div class="pass-reset">
+
+            <form action="" method="post">
+                {% csrf_token %}
+                <label>Podaj nowe hasło:
+                    <input name="pass" type="password">
+                </label><br/>
+                <label>Powtórz hasło:
+                    <input name="pass2" type="password">
+                </label>
+                <input type="submit" value="Zmień!">
+            </form>
+
+        </div>
+    </div>
+{% endblock %}
