@@ -243,11 +243,18 @@ document.addEventListener("DOMContentLoaded", function () {
             const formularz = document.querySelector('form')
 
             if (this.currentStep === 3){
-                console.log('ok')
                 const categories = formularz.querySelectorAll('input[type="checkbox"]:checked')
-                for (let i=0; i < categories.length; i++){
-                    console.log(categories[i].value)
+                const institutions = formularz.querySelectorAll('.institution')
+                console.log(institutions)
+                for (let i=0; i < institutions.length; i++){
+                    institutions[i].style.display = 'None'
+                    for (let j=0; j < categories.length; j++){
+                        if (categories[j].value.toLowerCase() in institutions[i].dataset) {
+                            institutions[i].style.display = 'block'
+                        }
+                    }
                 }
+
             }
 
             if (this.currentStep === 5) {
