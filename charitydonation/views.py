@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.views import View
 from charitydonation.models import Category, Donation, Institution, UserToken
 from django.http import HttpResponse, HttpResponseRedirect
@@ -236,8 +236,6 @@ class CorrectPassword(View):
 
     def post(self, request):
         password = request.POST.get('password')
-        print(password)
-        print(check_password(password, request.user.password))
         if check_password(password, request.user.password):
             print('ok')
             return HttpResponse(json.dumps('correct-password'))
@@ -294,4 +292,60 @@ class ValidateAccount(View):
                 return redirect('landing-page')
 
 
+class ForgotPassword(View):
 
+    def get(self, request):
+        return render(request, 'pass-forgot.html')
+
+    def post(self, request):
+        email = request.POST.get('email')
+        try:
+            user = User.objects.get(email=email)
+            reset_token = create_token(16)
+            old_token = UserToken.objects.get(user=user).delete()
+            UserToken.objects.create(user=user, token=reset_token, password_reset=True)
+
+            html = """\
+                        <html>
+                          <body>
+                            <p>Hi,<br>
+                               Link to change your password: <br>
+                               <a href="{}/{}">Change Your Account</a>
+                            </p>
+                          </body>
+                        </html>
+                        """.format(os.environ.get('RESET_LINK'), reset_token)
+
+            send_mail('Reset Password', '', 'Charity Donation', (user.email,), html_message=html)
+
+            statement = 'Na adres email: {} został wysłany link do zmiany hasła.'.format(user.email)
+            return render(request, 'statement.html', {'statement': statement})
+        except Exception as e:
+            statement = 'Nie ma takiego użytkownika w bazie danych'
+            return render(request, 'statement.html', {'statement': statement})
+
+
+class ResetPassword(View):
+
+    def get(self, request, reset_token):
+        user_token = get_object_or_404(UserToken, token=reset_token)
+        if user_token.password_reset:
+            return render(request, 'pass-reset.html')
+
+    def post(self, request, reset_token):
+        user_token = get_object_or_404(UserToken, token=reset_token)
+        user = user_token.user
+
+        new_password = request.POST.get('pass')
+        repeated_pass = request.POST.get('pass2')
+
+        if new_password == repeated_pass:
+            user.password = make_password(new_password)
+            user.save()
+            statement = 'Ustawiono nowe hasło'
+            user_token.delete()
+            return render(request, 'statement.html', locals())
+
+        else:
+            statement = 'Hasła nie są takie same'
+            return render(request, 'statement.html', locals())
