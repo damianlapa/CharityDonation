@@ -86,7 +86,7 @@
                 się zajmują, komu pomagają i czego potrzebują.</p>
 
             <ul class="help--slides-items">
-                {% for foundation in foundations %}
+                {% for foundation in institutions_all %}
                     <li>
                         <div class="col">
                             <div class="title">{{ foundation.name }}</div>
@@ -102,13 +102,29 @@
 
                 {% endfor %}
             </ul>
-            <!-- Pagination
             <ul class="help--slides-pagination">
-              <li><a href="#" class="btn btn--small btn--without-border active" data-page="1">1</a></li>
-              <li><a href="#" class="btn btn--small btn--without-border" data-page="2">2</a></li>
-              <li><a href="#" class="btn btn--small btn--without-border" data-page="3">3</a></li>
+              {% if institutions_all.has_other_pages %}
+                <ul class="pagination">
+                    {% if institutions_all.has_previous %}
+                        <li><a href="?page={{ institutions_all.previous_page_number }}"> < poprzednia</a></li>
+                    {% else %}
+                        <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+                    {% for i in institutions_all.paginator.page_range %}
+                        {% if institutions_all.number == i %}
+                            <li class="active"><span>{{ i }} <span class="sr-only">(current)</span></span></li>
+                        {% else %}
+                            <li><a href="?page={{ i }}">|{{ i }}|</a></li>
+                        {% endif %}
+                    {% endfor %}
+                    {% if institutions_all.has_next %}
+                        <li><a href="?page={{ institutions_all.next_page_number }}"> następna ></a></li>
+                    {% else %}
+                        <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                  </ul>
+            {% endif %}
             </ul>
-            -->
         </div>
 
 
