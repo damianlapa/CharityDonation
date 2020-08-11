@@ -7,6 +7,7 @@ from django.contrib.auth import authenticate, logout, login
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.hashers import check_password, make_password
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 import json
 import random
 from django.core.mail import send_mail
@@ -50,6 +51,13 @@ class LandingPage(View):
         foundations = institutions.filter(type='Fundacja')
         organizations = institutions.filter(type='Organizacja pozarządowa')
         local_collections = institutions.filter(type='Zbiórka lokalna')
+
+        paginator = Paginator(institutions, 5)
+
+        page = int(request.GET.get("page", 1))
+
+        institutions_all = paginator.get_page(page)
+
 
         if request.user.is_anonymous:
             username = 'Gość'

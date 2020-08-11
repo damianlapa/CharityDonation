@@ -1487,8 +1487,9 @@ header nav ul li:last-of-type {
   font-size: 1.2rem;
   margin-top: 20px;
 }
-
+-->
 /* line 96, scss/modules/homepage-sections/_help.scss */
+/*
 .help--slides-pagination {
   margin-top: 40px;
   display: -webkit-box;
@@ -1498,12 +1499,13 @@ header nav ul li:last-of-type {
       -ms-flex-pack: center;
           justify-content: center;
 }
-
+*/
 /* line 101, scss/modules/homepage-sections/_help.scss */
+/*
 .help--slides-pagination li {
   margin: 0 8px;
 }
-
+*/
 /* line 1, scss/modules/_footer.scss */
 footer {
   min-height: 80vh;
